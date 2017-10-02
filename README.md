@@ -23,7 +23,18 @@ B) It is designed to be reused but also has confusing semantics around disposing
 The interfaces provided by this library purposefully do not implement IDisposable, as consumers should generally not call this themselves.
 If you are using a DI container then that should properly dispose of the resource on your behalf.
 
-SharedHttpClient is designed to be used as a singleton, and it is generally safe to do so, however it does inherit an issue around DNS resolution from HttpClient (See 2 in footnotes)
+# How to use
+
+ISharedHttpClient is implemented by [SharedHttpClient](https://github.com/tobyhei/SaneHttpClient/blob/master/src/SaneHttpClient/SharedHttpClient.cs)
+IUniqueHttpClient is implemented by [UniqueHttpClient](https://github.com/tobyhei/SaneHttpClient/blob/master/src/SaneHttpClient/UniqueHttpClient.cs)
+
+Both of which internally use [HttpClientPool](https://github.com/tobyhei/SaneHttpClient/blob/master/src/SaneHttpClient/HttpClientPool.cs) to reuse HttpClients as much as possible.
+There is a static instance of the HttpClientPool that can be used by default when creating instances of SharedHttpClient and UniqueHttpClients,
+alternatively a custom HttpClientPool can be created specifying which HttpMessageHandler to use for HttpClients.
+
+Any HttpClientPool created must be long lived to effectively pool HttpClients. It is recommended that either the default static instance is used or that a custom instance is used as a singleton.
+
+As both SharedHttpClient and UniqueHttpClient are designed to use long living HttpClients, while it is generally safe to do so, HttpClient does have an issue around DNS resolution (See 2 in footnotes)
 
 1.
 https://github.com/mspnp/performance-optimization/blob/27edbfd20f2906abd93da28aeb0d12f2c237a4e7/ImproperInstantiation/docs/ImproperInstantiation.md

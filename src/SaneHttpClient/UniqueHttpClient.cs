@@ -1,27 +1,52 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using SaneHttpClient.Abstractions;
 
 namespace SaneHttpClient
 {
     /// <summary>
-    /// An adapter for <see cref="HttpClient"/> so that it can inherit from <see cref="IUniqueHttpClient"/>
+    /// Implementation of <see cref="IUniqueHttpClient"/> which does not expose it's internal <see cref="HttpClient"/>
     /// 
-    /// <seealso cref="SharedHttpClient"/>> should be preferred unless the stateful properties of <seealso cref="HttpClient"/> are required
+    /// Throws NullReferenceExceptions if used after disposed
+    /// 
+    /// Safe to use for as little or as long as needed, as it internally reuses <see cref="HttpClient"/> instances
     /// </summary>
-    public class UniqueHttpClient : HttpClient, IUniqueHttpClient
+    public class UniqueHttpClient : HttpClientBase, IUniqueHttpClient
     {
+        /// <summary>
+        /// Creates an instance of <see cref="UniqueHttpClient"/> using the <see cref="DefaultPool"/>
+        /// </summary>
         public UniqueHttpClient()
         {
         }
 
-        public UniqueHttpClient(HttpMessageHandler handler)
-            : base(handler)
+        /// <summary>
+        /// Creates an instance of <see cref="UniqueHttpClient"/> using the provided <see cref="returnPool"/>
+        /// </summary>
+        /// <param name="returnPool"></param>
+        public UniqueHttpClient(HttpClientPool returnPool) : base(returnPool)
         {
         }
 
-        public UniqueHttpClient(HttpMessageHandler handler, bool disposeHandler)
-            : base(handler, disposeHandler)
+        public Uri BaseAddress
         {
+            get { return Inner.BaseAddress; }
+            set { Inner.BaseAddress = value; }
+        }
+
+        public HttpRequestHeaders DefaultRequestHeaders => Inner.DefaultRequestHeaders;
+
+        public long MaxResponseContentBufferSize
+        {
+            get { return Inner.MaxResponseContentBufferSize; }
+            set { Inner.MaxResponseContentBufferSize = value; }
+        }
+
+        public TimeSpan Timeout
+        {
+            get { return Inner.Timeout; }
+            set { Inner.Timeout = value; }
         }
     }
 }
