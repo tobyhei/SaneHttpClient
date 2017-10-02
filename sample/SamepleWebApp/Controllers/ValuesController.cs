@@ -10,22 +10,19 @@ namespace SampleWebApp.Controllers
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
-        private readonly IUniqueHttpClient uniqueClient;
         private readonly ISharedHttpClient sharedClient;
 
-        public ValuesController(IUniqueHttpClient uniqueClient, ISharedHttpClient sharedClient)
+        public ValuesController(ISharedHttpClient sharedClient)
         {
-            this.uniqueClient = uniqueClient;
             this.sharedClient = sharedClient;
         }
 
         // GET api/values
         [HttpGet]
-        public async Task<IEnumerable<string>> Get()
+        public async Task<string> Get()
         {
-            var one = await uniqueClient.GetAsync("https://www.bing.com");
-            var two = await sharedClient.GetAsync("https://www.google.com");
-            return new string[] { await one.Content.ReadAsStringAsync(), await two.Content.ReadAsStringAsync() };
+            var one = await sharedClient.GetAsync("https://www.google.com");
+            return  await one.Content.ReadAsStringAsync() ;
         }
 
         // GET api/values/5

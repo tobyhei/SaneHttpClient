@@ -26,9 +26,6 @@ namespace SampleWebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-
-            services.AddTransient<IUniqueHttpClientBuilder, UniqueHttpClientBuilder>();
-            services.AddTransient<IUniqueHttpClient>(s => s.GetRequiredService<IUniqueHttpClientBuilder>().Build());
             services.AddSingleton<ISharedHttpClient, DefaultHttpClient>();
         }
 
