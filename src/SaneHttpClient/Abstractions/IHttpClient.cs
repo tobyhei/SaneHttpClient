@@ -1,42 +1,18 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SaneHttpClient.Abstractions
 {
     /// <summary>
-    /// Exposes all functionality of <see cref="HttpClient"/> with an interface specifying that it should only be used by one consumer
-    /// and that it is not safe for sharing between multiple consumers.
+    /// Exposes an interface over <see cref="HttpClient"/> without configuration methods
     /// 
-    /// <seealso cref="ISharedHttpClient"/>> should be preferred unless the stateful properties of <seealso cref="HttpClient"/> are required
+    /// Prefer using <see cref="ISharedHttpClient"/> or <see cref="IUniqueHttpClient"/>
     /// </summary>
-    public interface IUniqueHttpClient
+    public interface IHttpClient
     {
-        /// <summary>Gets or sets the base address of Uniform Resource Identifier (URI) of the Internet resource used when sending requests.</summary>
-        /// <returns>The base address of Uniform Resource Identifier (URI) of the Internet resource used when sending requests.</returns>
-        Uri BaseAddress { get; set; }
-
-        /// <summary>Gets the headers which should be sent with each request.</summary>
-        /// <returns>The headers which should be sent with each request.</returns>
-        HttpRequestHeaders DefaultRequestHeaders { get; }
-
-        /// <summary>Gets or sets the maximum number of bytes to buffer when reading the response content.</summary>
-        /// <returns>The maximum number of bytes to buffer when reading the response content. The default value for this property is 2 gigabytes.</returns>
-        /// <exception cref="T:System.ArgumentOutOfRangeException">The size specified is less than or equal to zero.</exception>
-        /// <exception cref="T:System.InvalidOperationException">An operation has already been started on the current instance.</exception>
-        /// <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
-        long MaxResponseContentBufferSize { get; set; }
-
-        /// <summary>Gets or sets the timespan to wait before the request times out.</summary>
-        /// <returns>The timespan to wait before the request times out.</returns>
-        /// <exception cref="T:System.ArgumentOutOfRangeException">The timeout specified is less than or equal to zero and is not <see cref="F:System.Threading.Timeout.InfiniteTimeSpan"></see>.</exception>
-        /// <exception cref="T:System.InvalidOperationException">An operation has already been started on the current instance.</exception>
-        /// <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
-        TimeSpan Timeout { get; set; }
-
         /// <summary>Send a GET request to the specified Uri and return the response body as a string in an asynchronous operation.</summary>
         /// <param name="requestUri">The Uri the request is sent to.</param>
         /// <returns>The task object representing the asynchronous operation.</returns>
