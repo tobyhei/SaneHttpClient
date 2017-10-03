@@ -3,111 +3,100 @@ using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using SaneHttpClient.Abstractions;
 
 namespace SaneHttpClient
 {
     /// <summary>
-    /// Implementation of <see cref="ISharedHttpClient"/> which does not expose it's internal <see cref="HttpClient"/>
-    /// or any of it's stateful methods making it safe to share between multiple consumers
+    /// Base functionality shared by <see cref="SingleHttpClient"/>> and <see cref="UniqueHttpClient"/>
+    /// which does not expose it's internal <see cref="System.Net.Http.HttpClient"/> or any of it's stateful methods
+    /// 
+    /// Not intended to be used externally, just for code reuse within the library
     /// </summary>
-    public class SharedHttpClient : ISharedHttpClient, IDisposable
+    public abstract class HttpClientBase
     {
-        private readonly HttpClient inner;
+        protected readonly HttpClient HttpClient;
 
-        public SharedHttpClient()
+        protected HttpClientBase(HttpClient httpClient)
         {
-            inner = new HttpClient();
+            HttpClient = httpClient;
         }
-
-        public SharedHttpClient(HttpMessageHandler handler)
-        {
-            inner = new HttpClient(handler);
-        }
-
-        public SharedHttpClient(HttpMessageHandler handler, bool disposeHandler)
-        {
-            inner = new HttpClient(handler, disposeHandler);
-        }
-
-        public void Dispose() => inner.Dispose();
 
         public Task<string> GetStringAsync(string requestUri)
-            => inner.GetStringAsync(requestUri);
+            => HttpClient.GetStringAsync(requestUri);
         public Task<string> GetStringAsync(Uri requestUri)
-            => inner.GetStringAsync(requestUri);
+            => HttpClient.GetStringAsync(requestUri);
 
         public Task<byte[]> GetByteArrayAsync(string requestUri)
-            => inner.GetByteArrayAsync(requestUri);
+            => HttpClient.GetByteArrayAsync(requestUri);
         public Task<byte[]> GetByteArrayAsync(Uri requestUri)
-            => inner.GetByteArrayAsync(requestUri);
+            => HttpClient.GetByteArrayAsync(requestUri);
 
         public Task<Stream> GetStreamAsync(string requestUri)
-            => inner.GetStreamAsync(requestUri);
+            => HttpClient.GetStreamAsync(requestUri);
         public Task<Stream> GetStreamAsync(Uri requestUri)
-            => inner.GetStreamAsync(requestUri);
+            => HttpClient.GetStreamAsync(requestUri);
 
         public Task<HttpResponseMessage> GetAsync(string requestUri)
-            => inner.GetAsync(requestUri);
+            => HttpClient.GetAsync(requestUri);
         public Task<HttpResponseMessage> GetAsync(Uri requestUri)
-            => inner.GetAsync(requestUri);
+            => HttpClient.GetAsync(requestUri);
         public Task<HttpResponseMessage> GetAsync(
             string requestUri, HttpCompletionOption completionOption)
-             => inner.GetAsync(requestUri, completionOption);
+             => HttpClient.GetAsync(requestUri, completionOption);
         public Task<HttpResponseMessage> GetAsync(
             Uri requestUri, HttpCompletionOption completionOption)
-            => inner.GetAsync(requestUri, completionOption);
+            => HttpClient.GetAsync(requestUri, completionOption);
 
         public Task<HttpResponseMessage> GetAsync(string requestUri, CancellationToken cancellationToken)
-            => inner.GetAsync(requestUri, cancellationToken);
+            => HttpClient.GetAsync(requestUri, cancellationToken);
         public Task<HttpResponseMessage> GetAsync(Uri requestUri, CancellationToken cancellationToken)
-            => inner.GetAsync(requestUri, cancellationToken);
+            => HttpClient.GetAsync(requestUri, cancellationToken);
         public Task<HttpResponseMessage> GetAsync(
             string requestUri, HttpCompletionOption completionOption, CancellationToken cancellationToken)
-            => inner.GetAsync(requestUri, completionOption, cancellationToken);
+            => HttpClient.GetAsync(requestUri, completionOption, cancellationToken);
         public Task<HttpResponseMessage> GetAsync(
             Uri requestUri, HttpCompletionOption completionOption, CancellationToken cancellationToken)
-            => inner.GetAsync(requestUri, completionOption, cancellationToken);
+            => HttpClient.GetAsync(requestUri, completionOption, cancellationToken);
 
         public Task<HttpResponseMessage> PostAsync(string requestUri, HttpContent content)
-            => inner.PostAsync(requestUri, content);
+            => HttpClient.PostAsync(requestUri, content);
         public Task<HttpResponseMessage> PostAsync(Uri requestUri, HttpContent content)
-            => inner.PostAsync(requestUri, content);
+            => HttpClient.PostAsync(requestUri, content);
         public Task<HttpResponseMessage> PostAsync(
             string requestUri, HttpContent content, CancellationToken cancellationToken)
-            => inner.PostAsync(requestUri, content, cancellationToken);
+            => HttpClient.PostAsync(requestUri, content, cancellationToken);
         public Task<HttpResponseMessage> PostAsync(
             Uri requestUri, HttpContent content, CancellationToken cancellationToken)
-            => inner.PostAsync(requestUri, content, cancellationToken);
+            => HttpClient.PostAsync(requestUri, content, cancellationToken);
 
         public Task<HttpResponseMessage> PutAsync(string requestUri, HttpContent content)
-            => inner.PutAsync(requestUri, content);
+            => HttpClient.PutAsync(requestUri, content);
         public Task<HttpResponseMessage> PutAsync(Uri requestUri, HttpContent content)
-            => inner.PutAsync(requestUri, content);
+            => HttpClient.PutAsync(requestUri, content);
         public Task<HttpResponseMessage> PutAsync(string requestUri, HttpContent content, CancellationToken cancellationToken)
-            => inner.PutAsync(requestUri, content, cancellationToken);
+            => HttpClient.PutAsync(requestUri, content, cancellationToken);
         public Task<HttpResponseMessage> PutAsync(Uri requestUri, HttpContent content, CancellationToken cancellationToken)
-            => inner.PutAsync(requestUri, content, cancellationToken);
+            => HttpClient.PutAsync(requestUri, content, cancellationToken);
 
         public Task<HttpResponseMessage> DeleteAsync(string requestUri)
-            => inner.DeleteAsync(requestUri);
+            => HttpClient.DeleteAsync(requestUri);
         public Task<HttpResponseMessage> DeleteAsync(Uri requestUri)
-            => inner.DeleteAsync(requestUri);
+            => HttpClient.DeleteAsync(requestUri);
         public Task<HttpResponseMessage> DeleteAsync(string requestUri, CancellationToken cancellationToken)
-            => inner.DeleteAsync(requestUri, cancellationToken);
+            => HttpClient.DeleteAsync(requestUri, cancellationToken);
         public Task<HttpResponseMessage> DeleteAsync(Uri requestUri, CancellationToken cancellationToken)
-            => inner.DeleteAsync(requestUri, cancellationToken);
+            => HttpClient.DeleteAsync(requestUri, cancellationToken);
 
         public Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
-            => inner.SendAsync(request);
+            => HttpClient.SendAsync(request);
         public Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, HttpCompletionOption completionOption)
-            => inner.SendAsync(request, completionOption);
+            => HttpClient.SendAsync(request, completionOption);
         public Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
-            => inner.SendAsync(request, cancellationToken);
+            => HttpClient.SendAsync(request, cancellationToken);
         public Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, HttpCompletionOption completionOption, CancellationToken cancellationToken)
-            => inner.SendAsync(request, completionOption, cancellationToken);
+            => HttpClient.SendAsync(request, completionOption, cancellationToken);
     }
 }

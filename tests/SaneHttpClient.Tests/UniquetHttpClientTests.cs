@@ -3,12 +3,12 @@ using Xunit;
 
 namespace SaneHttpClient.Tests
 {
-    public class SharedHttpClientTests
+    public class UniqueHttpClientTests
     {
         [Fact]
-        public async Task SharedHttpClient_Get_ReturnsExpected()
+        public async Task UniqueHttpClient_Get_ReturnsExpected()
         {
-            var client = new SharedHttpClient();
+            var client = new UniqueHttpClient();
 
             var result = await client.GetAsync("https://google.com.au");
 
