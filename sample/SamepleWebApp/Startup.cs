@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SampleWebApp.Controllers;
+using SampleWebApp.Models;
 
 namespace SampleWebApp
 {
@@ -23,6 +25,7 @@ namespace SampleWebApp
             services.AddSingleton<ISharedHttpClient, DefaultHttpClient>();
             services.AddTransient<IHttpClientBuilder>(s => new HttpClientBuilder());
             services.AddTransient<IUniqueHttpClient>(s => s.GetRequiredService<IHttpClientBuilder>().Build());
+            services.AddSingleton<VisitorCounter>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

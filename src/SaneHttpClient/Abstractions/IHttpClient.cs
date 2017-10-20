@@ -9,7 +9,8 @@ namespace SaneHttpClient.Abstractions
     /// <summary>
     /// Exposes an interface over <see cref="HttpClient"/> without configuration methods
     /// 
-    /// Prefer using <see cref="ISharedHttpClient"/> or <see cref="IUniqueHttpClient"/>
+    /// Prefer using <see cref="ISharedHttpClient"/> or <see cref="IUniqueHttpClient"/>,
+    /// this class is only intended as a base to share methods and extension methods
     /// </summary>
     public interface IHttpClient
     {

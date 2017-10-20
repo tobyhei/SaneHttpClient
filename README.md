@@ -26,6 +26,22 @@ as the functionality is not exposed in the client itself. This is because if an 
 The interfaces provided by this library purposefully do not implement IDisposable, as consumers should generally not call this themselves.
 If you are using a DI container then that should properly dispose of the resource on your behalf.
 
+Additionally SingleHttpClient shares a single http client between all instances. This allows consumers of the library to replace existing uses of 
+
+```
+using (var client = new HttpClient)
+...
+```
+
+with
+
+```
+(var client = new SingleHttpClient)
+...
+```
+
+and avoids the issue described in footnote 1. 
+
 # How to use
 
 ISharedHttpClient is implemented by [SingleHttpClient](https://github.com/tobyhei/SaneHttpClient/blob/master/src/SaneHttpClient/SingleHttpClient.cs) and [DefaultHttpClient](https://github.com/tobyhei/SaneHttpClient/blob/master/src/SaneHttpClient/DefaultHttpClient.cs)
@@ -35,7 +51,34 @@ SingleHttpClient internally uses a single HttpClient to allow regular creation o
 
 DefaultHttpClient and UniqueHttpClient do not reuse HttpClients and as so care must be taken not to create too many.
 
-As all clients are designed to use long living HttpClients, while it is generally safe to do so, users should be aware that HttpClient doesn't refresh IP addresses returned by DNS (See 3 in footnotes)
+# TODO
+
+### Other issues related to HttpClient should be investigated and fixed, known things that need addressing
+
+DefaultConnectionLimit should be increased when a significant amount of traffic is going to a few servers.
+https://msdn.microsoft.com/en-us/library/system.net.servicepointmanager.defaultconnectionlimit(v=vs.110).aspx
+
+https://blogs.msdn.microsoft.com/jpsanders/2009/05/20/understanding-maxservicepointidletime-and-defaultconnectionlimit/
+
+https://github.com/dotnet/corefx/issues/2332
+
+ConnectionLeaseTimeout should be set to avoid DNS refresh issues
+
+https://msdn.microsoft.com/en-us/library/system.net.servicepoint.connectionleasetimeout(v=vs.110).aspx
+
+http://byterot.blogspot.com.au/2016/07/singleton-httpclient-dns.html
+
+https://github.com/dotnet/corefx/issues/11224
+
+### IUniqueHttpClient should add readonly access to DefaultRequestHeaders
+
+Currently IUniqueHttpClient doesn't allow reading DefaultRequestHeaders as the objects returned are mutable and would allow other consumers to interfere with each other.
+
+Should create a read only snapshot of these headers to allow consumers to read without modifying the values.
+
+### To allow better reuse of HttpClients without restricting configuration changes
+
+Investigate separating config completely from HttpClient and then modifying HttpRequestMessage to add custom configuration before forwarding to shared HttpClient
 
 # Footnotes
 
@@ -46,7 +89,4 @@ https://aspnetmonsters.com/2016/08/2016-08-27-httpclientwrong/
 
 ### 2.
 https://github.com/dotnet/corefx/blob/819da8af67f04867012a3fb274e1eca6078a048e/src/System.Net.Http/src/System/Net/Http/HttpClient.cs#L594
-
-### 3.
-http://byterot.blogspot.com.au/2016/07/singleton-httpclient-dns.html
 

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Net.Http.Headers;
+using SaneHttpClient.Abstractions;
 using Xunit;
 
 namespace SaneHttpClient.Tests
@@ -12,21 +14,21 @@ namespace SaneHttpClient.Tests
             var testTimeout = TimeSpan.FromSeconds(3);
             var testUri = new Uri("http://google.com");
             var testBufferSize = 2 * 1024;
+            var testAcceptHeader = new MediaTypeWithQualityHeaderValue("application/json");
 
             // Act
             var builder = new HttpClientBuilder();
             builder.Timeout = testTimeout;
             builder.BaseAddress = testUri;
             builder.MaxResponseContentBufferSize = testBufferSize;
-            //builder.DefaultRequestHeaders
+            builder.DefaultRequestHeaders.Accept.Add(testAcceptHeader);
 
-            var client = builder.Build();
+            IUniqueHttpClient client = builder.Build();
 
             // Assert
             Assert.Equal(testTimeout, client.Timeout);
             Assert.Equal(testUri, client.BaseAddress);
             Assert.Equal(testBufferSize, client.MaxResponseContentBufferSize);
-            //builder.DefaultRequestHeaders
         }
 
         [Fact]
@@ -42,7 +44,6 @@ namespace SaneHttpClient.Tests
                 .SetTimeout(testTimeout)
                 .SetBaseAddress(testUri)
                 .SetMaxResponseContentBufferSize(testBufferSize);
-            //builder.DefaultRequestHeaders
 
             var client = builder.Build();
 
@@ -50,7 +51,6 @@ namespace SaneHttpClient.Tests
             Assert.Equal(testTimeout, client.Timeout);
             Assert.Equal(testUri, client.BaseAddress);
             Assert.Equal(testBufferSize, client.MaxResponseContentBufferSize);
-            //builder.DefaultRequestHeaders
         }
     }
 }

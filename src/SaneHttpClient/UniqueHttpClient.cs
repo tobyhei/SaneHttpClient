@@ -7,8 +7,6 @@ namespace SaneHttpClient
     /// <summary>
     /// An implementation of <see cref="IHttpClient"/> which allows custom configuration
     /// and is therefore not safe to share
-    /// 
-    /// TODO add readonly access to DefaultRequestHeaders
     /// </summary>
     public class UniqueHttpClient : HttpClientBase, IUniqueHttpClient
     {
