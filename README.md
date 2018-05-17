@@ -1,3 +1,5 @@
+# This project has been abandoned midway through after seeing the ASP Team was working on a vastly superior approach https://github.com/aspnet/HttpClientFactory
+
 # An opinionated approach to using .NETs HttpClient safely
 
 This library aims to make using [HttpClient](https://msdn.microsoft.com/en-us/library/HttpClient) safer and easier, via explicitly typed interfaces and implementations.
